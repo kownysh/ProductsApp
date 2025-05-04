@@ -12,6 +12,7 @@ import SignUpForm from './components/SignUpForm';
 import LoggedInContext from './components/LoggedInContext';
 import WishListedProducts from './components/WishListedProducts';
 import AdminUploadImage from './components/AdminUploadImage';
+import CartPage from './components/CartPage';
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -62,6 +63,7 @@ function App() {
               <Route path='/signup' element={loggedIn ? <Navigate to='/' /> : <SignUpForm />} />
               <Route path='/wishlist' element={<WishListedProducts />} />
               <Route path='/uploadimage' element={<AdminUploadImage />} />
+              <Route path='/cart' element={<CartPage />} />
             </Routes>
           </Flex>
 
