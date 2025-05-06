@@ -7,6 +7,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { EmptyState } from "@chakra-ui/react"
 import { LuShoppingCart } from "react-icons/lu"
 import { NavLink } from "react-router";
+import { FaRegHeart } from "react-icons/fa6";
 
 function WishListedProducts() {
 
@@ -81,7 +82,7 @@ function WishListedProducts() {
             <EmptyState.Root pt={40}>
                 <EmptyState.Content>
                     <EmptyState.Indicator>
-                        <LuShoppingCart />
+                        <FaRegHeart />
                     </EmptyState.Indicator>
                     <VStack textAlign="center">
                         <EmptyState.Title>Your wishlist is empty!</EmptyState.Title>
@@ -100,7 +101,7 @@ function WishListedProducts() {
             {!loading && wproducts && wproducts.length > 0 ? products.map((val, idx) => (
                 wproducts.find(prod => prod.productId === val.productId) &&
                 <Box padding={10} borderWidth={2} mx="auto" maxW="60vw" key={idx}>
-                    <Flex justify="space-between" alignItems="center" gap={4}>
+                    <Flex justify="space-between" flexDir={{base: "column", md: "row"}} alignItems="center" gap={4}>
                         <Image height={40} width={40} src={`${import.meta.env.VITE_SERVER}${val.imagePath.replace(/\\/g, '/')}`} />
                         <VStack>
                             <Heading>{val.description}</Heading>
