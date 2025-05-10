@@ -1,6 +1,6 @@
 import { Button, Container, Flex, Heading, Image, Text, VStack, HStack, IconButton, NumberInput, Box, Grid, GridItem, Spinner, Center, Link } from "@chakra-ui/react";
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useState } from "react";
 import LoggedInContext from "./LoggedInContext";
 import { LuMinus, LuPlus } from "react-icons/lu"
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -8,20 +8,29 @@ import { EmptyState } from "@chakra-ui/react"
 import { LuShoppingCart } from "react-icons/lu"
 import { NavLink } from "react-router";
 import { FaRegHeart } from "react-icons/fa6";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 function WishListedProducts() {
 
     const [wproducts, setProducts] = useState()
     const [loading, setLoading] = useState(false)
+    const queryClient = useQueryClient()
 
     const { loggedIn, products } = useContext(LoggedInContext)
 
+    const mutation = useMutation({
+        mutationFn: async (productId) => {
+            await axios.delete(`${import.meta.env.VITE_SERVER}/user/removefromwishlist`, { data: productId, withCredentials: true })
+        },
+
+        onSuccess: () => {
+            queryClient.invalidateQueries(["wishlistedproducts"])
+        }
+    })
 
     async function removeProduct(productId) {
-        setLoading(true)
-
         if (loggedIn) {
-            await axios.delete(`${import.meta.env.VITE_SERVER}/user/removefromwishlist`, { data: { productId: productId }, withCredentials: true })
+            mutation.mutate({ productId })
         } else {
             const items = localStorage.getItem("wishlistedproducts")
             let updatedItems = []
@@ -32,52 +41,67 @@ function WishListedProducts() {
             }
             localStorage.setItem("wishlistedproducts", JSON.stringify(updatedItems))
         }
-
-        setProducts(prev => prev.filter(product => product.productId !== productId))
-        setLoading(false)
     }
 
-    useEffect(function () {
-        async function getwishlistedProducts() {
-            setLoading(true)
-            const wishlistedProducts = await axios.get(`${import.meta.env.VITE_SERVER}/user/getwishlistedproducts`, {
+    const { isPending, data } = useQuery({
+        queryKey: ["wishlistedproducts"],
+        queryFn: async () => {
+            return await axios.get(`${import.meta.env.VITE_SERVER}/user/getwishlistedproducts`, {
                 withCredentials: true
             })
-            setTimeout(function () {
-                setProducts(wishlistedProducts.data.wishlistedProducts)
-                setLoading(false)
-            }, 750)
         }
+    })
 
-        if (loggedIn) {
-            getwishlistedProducts()
-        } else {
-            setLoading(true)
-            const items = localStorage.getItem("wishlistedproducts")
-            const itemsList = []
-            if (items) {
-                for (let i = 0; i < items.length; i++) {
-                    if (/^[0-9]$/.test(items[i])) {
-                        const obj = {
-                            productId: Number(items[i])
-                        }
-                        itemsList.push(obj)
-                    }
-                }
+    if (isPending) {
+        return (
+            <Container pt={40} >
+                <Center><Spinner size="lg" /></Center>
+            </Container>
+        )
+    }
 
-                setTimeout(function () {
-                    setProducts(itemsList)
-                    setLoading(false)
-                }, 750)
-            } else {
-                setProducts([])
-                setLoading(false)
-            }
-        }
+    // useEffect(function () {
+    //     async function getwishlistedProducts() {
+    //         setLoading(true)
+    //         console.log("These are the products")
+    //         const wishlistedProducts = await axios.get(`${import.meta.env.VITE_SERVER}/user/getwishlistedproducts`, {
+    //             withCredentials: true
+    //         })
+    //         setTimeout(function () {
+    //             setProducts(wishlistedProducts.data.wishlistedProducts)
+    //             setLoading(false)
+    //         }, 750)
+    //     }
 
-    }, [])
+    //     if (loggedIn) {
+    //         getwishlistedProducts()
+    //     } else {
+    //         setLoading(true)
+    //         const items = localStorage.getItem("wishlistedproducts")
+    //         const itemsList = []
+    //         if (items) {
+    //             for (let i = 0; i < items.length; i++) {
+    //                 if (/^[0-9]$/.test(items[i])) {
+    //                     const obj = {
+    //                         productId: Number(items[i])
+    //                     }
+    //                     itemsList.push(obj)
+    //                 }
+    //             }
 
-    if (wproducts && wproducts.length == 0) {
+    //             setTimeout(function () {
+    //                 setProducts(itemsList)
+    //                 setLoading(false)
+    //             }, 750)
+    //         } else {
+    //             setProducts([])
+    //             setLoading(false)
+    //         }
+    //     }
+
+    // }, [])
+
+    if (data.data.wishlistedProducts && data.data.wishlistedProducts.length == 0) {
         return (
             <EmptyState.Root pt={40}>
                 <EmptyState.Content>
@@ -98,10 +122,10 @@ function WishListedProducts() {
     return (
         <Container paddingTop={40}>
 
-            {!loading && wproducts && wproducts.length > 0 ? products.map((val, idx) => (
-                wproducts.find(prod => prod.productId === val.productId) &&
+            {data.data.wishlistedProducts && data.data.wishlistedProducts.length > 0 ? products.map((val, idx) => (
+                data.data.wishlistedProducts.find(prod => prod.productId === val.productId) &&
                 <Box padding={10} borderWidth={2} mx="auto" maxW="60vw" key={idx}>
-                    <Flex justify="space-between" flexDir={{base: "column", md: "row"}} alignItems="center" gap={4}>
+                    <Flex justify="space-between" flexDir={{ base: "column", md: "row" }} alignItems="center" gap={4}>
                         <Image height={40} width={40} src={`${import.meta.env.VITE_SERVER}${val.imagePath.replace(/\\/g, '/')}`} />
                         <VStack>
                             <Heading>{val.description}</Heading>

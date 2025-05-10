@@ -13,6 +13,8 @@ import LoggedInContext from './components/LoggedInContext';
 import WishListedProducts from './components/WishListedProducts';
 import AdminUploadImage from './components/AdminUploadImage';
 import CartPage from './components/CartPage';
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query"
+import AppRoutes from './components/AppRoutes';
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -21,10 +23,12 @@ function App() {
   const [currUser, setCurrUser] = useState("");
   const [userID, setUserID] = useState()
   const [wishListedProducts, setWishListedProducts] = useState([])
+  const queryClient = new QueryClient()
 
   useEffect(() => {
     async function getProducts() {
       const newValues = await axios.get(`${import.meta.env.VITE_SERVER}/getproducts`);
+
       setProducts(newValues.data.products);
       setFilteredProducts(newValues.data.products);
     }
@@ -38,39 +42,9 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <LoggedInContext.Provider value={{
-        loggedIn,
-        setLoggedIn,
-        filteredProducts,
-        setFilteredProducts,
-        currUser,
-        setCurrUser,
-        userID,
-        setUserID,
-        wishListedProducts,
-        setWishListedProducts,
-        products
-      }}>
-        <Flex direction="column" minHeight="100vh">
-          <Header />
-
-          <Flex flex="1" direction="column">
-            <Routes>
-              <Route path='/' element={<LandingPageContent products={products} />} />
-              <Route path='/products' element={<AllProducts products={products} />} />
-              <Route path='/login' element={loggedIn ? <Navigate to='/' /> : <LogInForm />} />
-              <Route path='/signup' element={loggedIn ? <Navigate to='/' /> : <SignUpForm />} />
-              <Route path='/wishlist' element={<WishListedProducts />} />
-              <Route path='/uploadimage' element={<AdminUploadImage />} />
-              <Route path='/cart' element={<CartPage />} />
-            </Routes>
-          </Flex>
-
-          <Footer />
-        </Flex>
-      </LoggedInContext.Provider>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <AppRoutes />
+    </QueryClientProvider>
   );
 }
 
