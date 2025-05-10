@@ -4,7 +4,6 @@ const authenticate = (req, res, next) => {
     try {
         const token = req.cookies["_CS-AT"]
         if (!token) {
-            console.log("No token")
             return res.status(401).json({ message: "Please login!" });
         }
         const decoded =  jwt.verify(token, process.env.SECRET_KEY)

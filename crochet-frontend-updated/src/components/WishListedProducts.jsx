@@ -6,7 +6,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { EmptyState } from "@chakra-ui/react"
 import { LuShoppingCart } from "react-icons/lu"
 import { NavLink } from "react-router";
-import { FaRegHeart } from "react-icons/fa6";
+import { FaCartArrowDown, FaCartPlus, FaRegHeart } from "react-icons/fa6";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useStore from "./GlobalStore";
 
@@ -17,7 +17,7 @@ function WishListedProducts() {
     const queryClient = useQueryClient()
 
     const loggedIn = useStore((state) => state.loggedIn)
-    const products= useStore((state) => state.products)
+    const products = useStore((state) => state.products)
 
     const mutation = useMutation({
         mutationFn: async (productId) => {
@@ -29,18 +29,22 @@ function WishListedProducts() {
         }
     })
 
+    const addCart = useMutation({
+        mutationFn: async (productId) => {
+            return await axios.post(`${import.meta.env.VITE_SERVER}/addtocart`, productId, { withCredentials: true })
+        }
+    })
+
     async function removeProduct(productId) {
         if (loggedIn) {
-            mutation.mutate({ productId })
-        } else {
-            const items = localStorage.getItem("wishlistedproducts")
-            let updatedItems = []
-            for (let i = 0; i < items.length; i++) {
-                if (/^[0-9]$/.test(items[i])) {
-                    items[i] != productId && updatedItems.push(Number(items[i]));
-                }
-            }
-            localStorage.setItem("wishlistedproducts", JSON.stringify(updatedItems))
+            mutation.mutateAsync({ productId })
+        }
+    }
+
+    async function addToCart(productId) {
+        if (loggedIn) {
+            addCart.mutateAsync({ productId })
+            mutation.mutateAsync({ productId })
         }
     }
 
@@ -61,48 +65,7 @@ function WishListedProducts() {
         )
     }
 
-    // useEffect(function () {
-    //     async function getwishlistedProducts() {
-    //         setLoading(true)
-    //         console.log("These are the products")
-    //         const wishlistedProducts = await axios.get(`${import.meta.env.VITE_SERVER}/user/getwishlistedproducts`, {
-    //             withCredentials: true
-    //         })
-    //         setTimeout(function () {
-    //             setProducts(wishlistedProducts.data.wishlistedProducts)
-    //             setLoading(false)
-    //         }, 750)
-    //     }
-
-    //     if (loggedIn) {
-    //         getwishlistedProducts()
-    //     } else {
-    //         setLoading(true)
-    //         const items = localStorage.getItem("wishlistedproducts")
-    //         const itemsList = []
-    //         if (items) {
-    //             for (let i = 0; i < items.length; i++) {
-    //                 if (/^[0-9]$/.test(items[i])) {
-    //                     const obj = {
-    //                         productId: Number(items[i])
-    //                     }
-    //                     itemsList.push(obj)
-    //                 }
-    //             }
-
-    //             setTimeout(function () {
-    //                 setProducts(itemsList)
-    //                 setLoading(false)
-    //             }, 750)
-    //         } else {
-    //             setProducts([])
-    //             setLoading(false)
-    //         }
-    //     }
-
-    // }, [])
-
-    if (data.data.wishlistedProducts && data.data.wishlistedProducts.length == 0) {
+    if (!isPending && data?.data?.wishlistedProducts?.length === 0) {
         return (
             <EmptyState.Root pt={40}>
                 <EmptyState.Content>
@@ -148,9 +111,14 @@ function WishListedProducts() {
                                     </NumberInput.IncrementTrigger>
                                 </HStack>
                             </NumberInput.Root>
-                            <IconButton bgColor="grey" onClick={async () => await removeProduct(val.productId)}>
-                                <RiDeleteBin6Line />
-                            </IconButton>
+                            <Flex gap={4}>
+                                <IconButton bgColor="grey" onClick={async () => await removeProduct(val.productId)}>
+                                    <RiDeleteBin6Line />
+                                </IconButton>
+                                <IconButton onClick={async () => await addToCart(val.productId)}>
+                                    <FaCartArrowDown />
+                                </IconButton>
+                            </Flex>
                         </VStack>
                     </Flex>
                 </Box>

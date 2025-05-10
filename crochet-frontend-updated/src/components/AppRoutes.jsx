@@ -14,6 +14,8 @@ import AdminUploadImage from './AdminUploadImage';
 import CartPage from './CartPage';
 import { useQuery } from "@tanstack/react-query"
 import useStore from './GlobalStore';
+import AboutUs from './AboutUs';
+import ContactUs from './ContactUs';
 
 function AppRoutes() {
 
@@ -59,6 +61,8 @@ function AppRoutes() {
                         <Route path='/wishlist' element={<WishListedProducts />} />
                         <Route path='/uploadimage' element={<AdminUploadImage />} />
                         <Route path='/cart' element={<CartPage />} />
+                        <Route path='/about' element={<AboutUs />}/>
+                        <Route path='/contact' element={<ContactUs />} />
                     </Routes>
                 </Flex>
 

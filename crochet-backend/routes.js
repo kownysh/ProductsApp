@@ -48,8 +48,6 @@ router.post('/signup', async function(req, res) {
         const newuser = await newUser(firstName, lastName, email.toLowerCase(), hashedPassword)
         res.status(201).json({ message: 'User created successfully!', newuser})
     } catch (error) {
-        console.log("Error creating. See logs:")
-        console.log(error)
         res.status(500).json({message: "Server Error"})
     }
 })
@@ -66,18 +64,16 @@ router.post('/login', async function(req, res) {
         if (!pwd) return res.redirect('/')
 
         const token = jwt.sign({ userId: user.userId }, process.env.SECRET_KEY, { expiresIn: "1h" })
-        console.log("Cookie is being created")
         res.cookie("_CS-AT", token, { httpOnly: true, sameSite: "none", secure: true })   
-        console.log("user logged in")
         return res.status(200).json({ message: "User logged In!" })
     } catch (err) {
         console.log("Error = " , err)
     }
 })
 
-router.post('/addtocart', async function(req, res) {
-    const { productId, imageName } = req.body
-    await addProductToCart(productId, imageName)
+router.post('/addtocart', authenticate, async function(req, res) {
+    const { productId } = req.body
+    await addProductToCart(req.userId, productId)
 
     return res.status(201).json({message: "Successfully added to Cart!"})
 })
@@ -88,14 +84,14 @@ router.post('/userdetails', async function(req, res) {
     return res.status(200).send({ userDetails })
 })
 
-router.get("/getcartproducts", async function(req, res) {
+router.get("/getcartproducts", authenticate, async function(req, res) {
     const products = await getCartProducts()
     return res.status(200).send({ products })
 })
 
-router.delete('/removeproductfromcart', async function(req, res) {
+router.delete('/removeproductfromcart', authenticate, async function(req, res) {
     const { productId } = req.body
-    await removeCartProduct(productId)
+    await removeCartProduct(req.userId, productId)
     return res.status(200).send()
 })
 
@@ -112,7 +108,7 @@ router.get('/getproducts', async function(req, res) {
     return res.status(200).send({ products })
 })
 
-router.post('/user/addtowishlist', authenticate ,async function(req, res) {
+router.post('/user/addtowishlist', authenticate, async function(req, res) {
     const { productId } = req.body
     await addProductToWishlist(req.userId, productId)
     return res.status(200).send({

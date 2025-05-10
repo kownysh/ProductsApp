@@ -82,12 +82,13 @@ class CartProducts extends Model {
 }
 
 CartProducts.init({
-    productId: {
-        type: DataTypes.BIGINT,
+    userId: {
+        type: DataTypes.INTEGER,
         primaryKey: true
     },
-    imageName: {
-        type: DataTypes.STRING
+    productId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true
     }
 }, {
     sequelize,
@@ -106,13 +107,14 @@ WishListProducts.init({
     productId: {
         type: DataTypes.INTEGER,
         primaryKey: true
-    }}, 
-        {
-            sequelize,
-            modelName: "WishListProducts",
-            tableName: "WishListProducts"
-        }
-    )
+    }
+},
+    {
+        sequelize,
+        modelName: "WishListProducts",
+        tableName: "WishListProducts"
+    }
+)
 
 await sequelize.sync({
     //force: true
@@ -124,7 +126,7 @@ async function newUser(firstName, lastName, email, password) {
 }
 
 async function getUserDetails(email) {
-    const user = await User.findOne({where: { email }})
+    const user = await User.findOne({ where: { email } })
     return user
 }
 
@@ -142,11 +144,13 @@ async function comparePassword(email, password) {
 }
 
 
-async function addProductToCart(productId, imageName) {
-    if (!await CartProducts.findOne({ where: { productId } })) {
+async function addProductToCart(userId, productId) {
+    try {
         await CartProducts.create({
-            productId, imageName
+            userId, productId
         })
+    } catch (e) {
+        console.log("product already exists")
     }
 }
 
@@ -155,11 +159,9 @@ async function getCartProducts() {
     return products
 }
 
-async function removeCartProduct(productId) {
+async function removeCartProduct(userId, productId) {
     await CartProducts.destroy({
-        where: {
-            productId
-        }
+        where: { userId, productId }
     })
 }
 
@@ -186,13 +188,13 @@ async function addProductToWishlist(userId, productId) {
 
 async function removeProductFromWishlist(userId, productId) {
     await WishListProducts.destroy({
-        where: {userId, productId}
+        where: { userId, productId }
     })
 }
 
 async function getWishlistedProducts(userId) {
     return await WishListProducts.findAll({
-        where: {userId}
+        where: { userId }
     })
 }
 

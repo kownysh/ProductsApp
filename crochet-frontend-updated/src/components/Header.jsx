@@ -13,8 +13,8 @@ const Header = () => {
     const headerValues = [
         { value: "Home", route: '/' },
         { value: "Shop", route: "/products" },
-        { value: "About", route: "/" },
-        { value: "Contact", route: "/" }
+        { value: "About", route: "/about" },
+        { value: "Contact", route: "/contact" }
     ]
 
     const currUser = useStore((state) => state.currUser)
