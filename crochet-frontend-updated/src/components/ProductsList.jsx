@@ -2,7 +2,6 @@ import axios from 'axios'
 import { useContext, useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import { Box, Container, Flex, SimpleGrid, Text, useConst } from '@chakra-ui/react';
-import LoggedInContext from './LoggedInContext';
 import { useQuery } from '@tanstack/react-query';
 import WishListAlert from './WishListAlert';
 import useStore from './GlobalStore';

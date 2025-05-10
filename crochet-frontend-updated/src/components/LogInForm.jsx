@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { NavLink, redirect, useNavigate } from "react-router";
 import axios from "axios";
-import LoggedInContext from "./LoggedInContext";
 import { useMutation } from "@tanstack/react-query";
 import useStore from "./GlobalStore";
 
@@ -11,7 +10,7 @@ function LogInForm() {
 
     const [password, setPassword] = useState(false)
     const navigate = useNavigate()
-    const { setCurrUser, setUserID } = useContext(LoggedInContext)
+    const setCurrUser = useStore((state) => state.setCurrUser)
     const loggedIn = useStore((state) => state.loggedIn)
     const setLoggedIn = useStore((state) => state.setLoggedIn)
 

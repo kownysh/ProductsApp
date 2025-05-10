@@ -5,7 +5,6 @@ import { RiHeart2Line, RiHeartFill } from "react-icons/ri";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { TfiShoppingCart } from "react-icons/tfi";
 import { NavLink } from "react-router";
-import LoggedInContext from "./LoggedInContext";
 import useStore from "./GlobalStore";
 
 export default function MobileHeader({ headerValues }) {

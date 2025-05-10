@@ -1,7 +1,6 @@
 import { Button, Container, Flex, Heading, Image, Text, VStack, HStack, IconButton, NumberInput, Box, Grid, GridItem, Spinner, Center, Link } from "@chakra-ui/react";
 import axios from "axios";
 import { memo, useCallback, useContext, useEffect, useState } from "react";
-import LoggedInContext from "./LoggedInContext";
 import { LuMinus, LuPlus } from "react-icons/lu"
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { EmptyState } from "@chakra-ui/react"

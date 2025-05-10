@@ -49,7 +49,7 @@ const Header = () => {
                             <IconButton as={NavLink} to='/wishlist' variant="plain">
                                 <RiHeart2Line />
                             </IconButton>
-                            <IconButton variant="plain">
+                            <IconButton as={NavLink} to='/cart' variant="plain">
                                 <TfiShoppingCart />
                             </IconButton>
                         </Flex>

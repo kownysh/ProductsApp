@@ -2,7 +2,6 @@ import { Box, Button, Checkbox, CheckboxGroup, CloseButton, createListCollection
 import ProductCard from "./ProductCard";
 import { useContext, useEffect, useState } from "react";
 import ProductFilters from "./ProductFilters";
-import LoggedInContext from "./LoggedInContext";
 import ProductsList from "./ProductsList";
 import useStore from "./GlobalStore";
 

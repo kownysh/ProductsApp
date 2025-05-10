@@ -1,6 +1,5 @@
 import { Box, Flex, Portal, Select, createListCollection } from "@chakra-ui/react"
 import { useContext, useEffect, useState } from "react";
-import LoggedInContext from "./LoggedInContext";
 import useStore from "./GlobalStore";
 
 function ProductFilters({ products }) {

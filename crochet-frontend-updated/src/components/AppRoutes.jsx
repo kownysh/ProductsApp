@@ -9,7 +9,6 @@ import { useState, useEffect } from 'react';
 import LandingPageContent from './LandingPageContent';
 import LogInForm from './LogInForm';
 import SignUpForm from './SignUpForm';
-import LoggedInContext from './LoggedInContext';
 import WishListedProducts from './WishListedProducts';
 import AdminUploadImage from './AdminUploadImage';
 import CartPage from './CartPage';

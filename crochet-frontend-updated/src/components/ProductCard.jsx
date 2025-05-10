@@ -3,9 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import { PiHeartBold, PiSpinner } from "react-icons/pi";
 import { IoMdHeart } from "react-icons/io";
 import axios from 'axios'
-import makePayment from "./PaymentFile";
-import LoggedInContext from "./LoggedInContext";
-import WishListAlert from "./WishListAlert";
 import useStore from "./GlobalStore";
 
 function ProductCard({ id, src, title, price, color, setShowAlert }) {
