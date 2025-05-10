@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import landingBg from "../assets/landing_bg.jpg"
 
 function LandingPageContent({ products }) {
-    console.log("console log", products)
+
     useEffect(function () {
         window.scrollTo(0, 0)
     }, [])

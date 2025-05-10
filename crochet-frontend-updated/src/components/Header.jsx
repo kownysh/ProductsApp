@@ -5,8 +5,8 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { TfiShoppingCart } from "react-icons/tfi";
 import MobileHeader from "./MobileHeader";
 import { NavLink } from "react-router";
-import LoggedInContext from "./LoggedInContext";
 import { RiHeart2Line } from "react-icons/ri";
+import useStore from "./GlobalStore";
 
 const Header = () => {
 
@@ -17,7 +17,8 @@ const Header = () => {
         { value: "Contact", route: "/" }
     ]
 
-    const { loggedIn, currUser } = useContext(LoggedInContext)
+    const currUser = useStore((state) => state.currUser)
+    const loggedIn = useStore((state) => state.loggedIn)
 
     return (
         <div>

@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import ProductFilters from "./ProductFilters";
 import LoggedInContext from "./LoggedInContext";
 import ProductsList from "./ProductsList";
+import useStore from "./GlobalStore";
 
 function AllProducts({ products }) {
 
@@ -11,7 +12,8 @@ function AllProducts({ products }) {
         window.scrollTo(0, 0)
     }, [])
 
-    const { filteredProducts } = useContext(LoggedInContext)
+    //const { filteredProducts } = useContext(LoggedInContext)
+    const filteredProducts = useStore((state) => state.filteredProducts)
 
     return (
         <Flex justify="center">

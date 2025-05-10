@@ -4,12 +4,16 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { NavLink, redirect, useNavigate } from "react-router";
 import axios from "axios";
 import LoggedInContext from "./LoggedInContext";
+import { useMutation } from "@tanstack/react-query";
+import useStore from "./GlobalStore";
 
 function LogInForm() {
 
     const [password, setPassword] = useState(false)
     const navigate = useNavigate()
-    const { loggedIn, setLoggedIn, setCurrUser, setUserID } = useContext(LoggedInContext)
+    const { setCurrUser, setUserID } = useContext(LoggedInContext)
+    const loggedIn = useStore((state) => state.loggedIn)
+    const setLoggedIn = useStore((state) => state.setLoggedIn)
 
     async function moveProductsToCart() {
         const items = localStorage.getItem("wishlistedproducts")
@@ -24,21 +28,28 @@ function LogInForm() {
         localStorage.removeItem("wishlistedproducts")
     }
 
+    const mutation = useMutation({
+        mutationFn: async ({email, password}) => {
+            console.log({email, password})
+            await axios.post(`${import.meta.env.VITE_SERVER}/login`, { email, password }, {
+                withCredentials: true
+            })
+        }
+    })
+
     async function submitLogin(e) {
         e.preventDefault()
         const email = e.target.email.value.toLowerCase()
         const password = e.target.password.value
         try {
-            await axios.post(`${import.meta.env.VITE_SERVER}/login`, { email, password }, {
-                withCredentials: true
-            })
+            await mutation.mutateAsync({ email, password })
             setLoggedIn(true)
             const userDetails = await axios.post(`${import.meta.env.VITE_SERVER}/userdetails`, { email }, { withCredentials: true })
-            moveProductsToCart()
             document.cookie = "_CS-UN = ".concat(userDetails.data.userDetails["firstName"]).concat(" ").concat(userDetails.data.userDetails["lastName"])
             setCurrUser(document.cookie.slice(document.cookie.indexOf('=') + 1))
             navigate('/')
         } catch (error) {
+            console.log(error)
             console.log("Unable to login")
         }
     }

@@ -1,11 +1,12 @@
 import { Box, Flex, Portal, Select, createListCollection } from "@chakra-ui/react"
 import { useContext, useEffect, useState } from "react";
 import LoggedInContext from "./LoggedInContext";
+import useStore from "./GlobalStore";
 
 function ProductFilters({ products }) {
     const [value, setValue] = useState(["allproducts"])
     const [sortValue, setSortvalue] = useState(["featured"])
-    const { setFilteredProducts } = useContext(LoggedInContext)
+    const setFilteredProducts = useStore((state) => state.setFilteredProducts)
 
     function handleFilter(e) {
         let filteredProducts;

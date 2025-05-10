@@ -3,6 +3,7 @@ import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Navigate, NavLink, redirect, useNavigate } from "react-router";
 import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 function SignUpForm() {
 
@@ -17,6 +18,11 @@ function SignUpForm() {
 
     const [fieldValue, setFieldValue] = useState(formValues)
     let navigate = useNavigate()
+    const mutation = useMutation({
+        mutationFn: async ({firstName, lastName, email, password}) => {
+            await axios.post(`${import.meta.env.VITE_SERVER}/signup`, {firstName, lastName, email, password})
+        }
+    })
 
     async function submitDetails(e) {
         e.preventDefault()
@@ -33,7 +39,7 @@ function SignUpForm() {
                 password: !password ? true : false
             })
         } else {
-            await axios.post(`${import.meta.env.VITE_SERVER}/signup`, {firstName, lastName, email, password})
+            mutation.mutateAsync({firstName, lastName, email, password})
             navigate('/login')
         }
     }

@@ -6,11 +6,13 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { TfiShoppingCart } from "react-icons/tfi";
 import { NavLink } from "react-router";
 import LoggedInContext from "./LoggedInContext";
+import useStore from "./GlobalStore";
 
 export default function MobileHeader({ headerValues }) {
 
     const [isMobile] = useMediaQuery("(max-width: 768px)")
-    const { loggedIn, currUser } = useContext(LoggedInContext)
+    const currUser = useStore((state) => state.currUser)
+    const loggedIn = useStore((state) => state.loggedIn)
 
     return (isMobile &&
         <Flex alignItems="center">

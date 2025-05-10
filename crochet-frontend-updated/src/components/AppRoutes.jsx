@@ -14,15 +14,16 @@ import WishListedProducts from './WishListedProducts';
 import AdminUploadImage from './AdminUploadImage';
 import CartPage from './CartPage';
 import { useQuery } from "@tanstack/react-query"
+import useStore from './GlobalStore';
 
 function AppRoutes() {
 
-    const [products, setProducts] = useState([]);
-    const [loggedIn, setLoggedIn] = useState(false);
-    const [filteredProducts, setFilteredProducts] = useState(products);
-    const [currUser, setCurrUser] = useState("");
-    const [userID, setUserID] = useState()
-    const [wishListedProducts, setWishListedProducts] = useState([])
+    const products = useStore((state) => state.products)
+    const setProducts = useStore((state) => state.setProducts)
+    const loggedIn = useStore((state) => state.loggedIn)
+    const setLoggedIn = useStore((state) => state.setLoggedIn)
+    const setFilteredProducts = useStore((state) => state.setFilteredProducts)
+    const setCurrUser = useStore((state) => state.setCurrUser)
 
     const { data } = useQuery({
         queryKey: ["allproducts"],
@@ -32,12 +33,6 @@ function AppRoutes() {
     })
 
     useEffect(() => {
-        async function getProducts() {
-            //const newValues = await axios.get(`${import.meta.env.VITE_SERVER}/getproducts`);
-
-            // setProducts(newValues.data.products);
-            // setFilteredProducts(newValues.data.products);
-        }
 
         if (data) {
             setProducts(data.data.products)
@@ -53,37 +48,23 @@ function AppRoutes() {
 
     return (
         <BrowserRouter>
-            <LoggedInContext.Provider value={{
-                loggedIn,
-                setLoggedIn,
-                filteredProducts,
-                setFilteredProducts,
-                currUser,
-                setCurrUser,
-                userID,
-                setUserID,
-                wishListedProducts,
-                setWishListedProducts,
-                products
-            }}>
-                <Flex direction="column" minHeight="100vh">
-                    <Header />
+            <Flex direction="column" minHeight="100vh">
+                <Header />
 
-                    <Flex flex="1" direction="column">
-                        <Routes>
-                            <Route path='/' element={<LandingPageContent products={products} />} />
-                            <Route path='/products' element={<AllProducts products={products} />} />
-                            <Route path='/login' element={loggedIn ? <Navigate to='/' /> : <LogInForm />} />
-                            <Route path='/signup' element={loggedIn ? <Navigate to='/' /> : <SignUpForm />} />
-                            <Route path='/wishlist' element={<WishListedProducts />} />
-                            <Route path='/uploadimage' element={<AdminUploadImage />} />
-                            <Route path='/cart' element={<CartPage />} />
-                        </Routes>
-                    </Flex>
-
-                    <Footer />
+                <Flex flex="1" direction="column">
+                    <Routes>
+                        <Route path='/' element={<LandingPageContent products={products} />} />
+                        <Route path='/products' element={<AllProducts products={products} />} />
+                        <Route path='/login' element={loggedIn ? <Navigate to='/' /> : <LogInForm />} />
+                        <Route path='/signup' element={loggedIn ? <Navigate to='/' /> : <SignUpForm />} />
+                        <Route path='/wishlist' element={<WishListedProducts />} />
+                        <Route path='/uploadimage' element={<AdminUploadImage />} />
+                        <Route path='/cart' element={<CartPage />} />
+                    </Routes>
                 </Flex>
-            </LoggedInContext.Provider>
+
+                <Footer />
+            </Flex>
         </BrowserRouter>
     )
 }

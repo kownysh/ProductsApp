@@ -9,6 +9,7 @@ import { LuShoppingCart } from "react-icons/lu"
 import { NavLink } from "react-router";
 import { FaRegHeart } from "react-icons/fa6";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import useStore from "./GlobalStore";
 
 function WishListedProducts() {
 
@@ -16,7 +17,8 @@ function WishListedProducts() {
     const [loading, setLoading] = useState(false)
     const queryClient = useQueryClient()
 
-    const { loggedIn, products } = useContext(LoggedInContext)
+    const loggedIn = useStore((state) => state.loggedIn)
+    const products= useStore((state) => state.products)
 
     const mutation = useMutation({
         mutationFn: async (productId) => {
